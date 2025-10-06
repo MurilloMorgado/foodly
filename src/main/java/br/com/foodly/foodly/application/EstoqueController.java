@@ -1,0 +1,26 @@
+package br.com.foodly.foodly.application;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.foodly.foodly.framework.models.Estoque;
+import br.com.foodly.foodly.framework.service.EstoqueService;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(value = "/estoque")
+public class EstoqueController {
+
+    private final EstoqueService estoqueService;
+
+    @GetMapping
+    public ResponseEntity<List<Estoque>> listarEstoque() {
+        List<Estoque> listaEstoque = estoqueService.listarEstoque();
+        return ResponseEntity.ok().body(listaEstoque);
+    }
+}
