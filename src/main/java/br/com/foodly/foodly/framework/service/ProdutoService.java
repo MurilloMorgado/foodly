@@ -13,7 +13,7 @@ public interface ProdutoService {
 
     Long criarProduto(ProdutoRequest produtoRequest);
 
-    void atualizarProdutoById(Produto produto, Long idProduto);
+    void atualizarProdutoById(ProdutoRequest produtoRequest, Long idProduto);
 
     void deletarProdutoById(Long idProduto);
 }
