@@ -28,4 +28,11 @@ public class ProdutoIngredienteServiceImpl implements ProdutoIngredienteService 
         produtoIngredienteRepository.saveAll(produtoIngrediente);
     }
 
+    @Override
+    public void deletarTodosProdutoIncredienteByIdProduto(Long idProduto) {
+        
+        produtoIngredienteRepository.deleteByProdutoId(idProduto);
+        
+    }
+
 }

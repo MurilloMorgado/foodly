@@ -3,6 +3,7 @@ package br.com.foodly.foodly.framework.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import br.com.foodly.foodly.domain.security.models.ProdutoRequest;
@@ -63,9 +64,33 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public void atualizarProdutoById(Produto produto, Long idProduto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'atualizarProdutoById'");
+    public void atualizarProdutoById(ProdutoRequest produtoRequest, Long idProduto) {
+
+        Produto produtoDB = buscarProdutoById(idProduto);
+        Produto newProduto = new Produto(produtoRequest);
+
+        BeanUtils.copyProperties(produtoDB, newProduto, "idProduto");
+        produtosRespository.save(produtoDB);
+
+        // Deletar Vinculo
+        produtoIngredienteService.deletarTodosProdutoIncredienteByIdProduto(idProduto);
+
+        // Vinculo
+        List<ProdutoIngrediente> vinculos = produtoRequest.getIngrediente().stream()
+                .map(item -> {
+                    ProdutoIngrediente produtoIngrediente = new ProdutoIngrediente();
+
+                    produtoIngrediente.setProduto(newProduto);
+                    produtoIngrediente.setQuantidade("1");
+
+                    produtoIngrediente
+                            .setIngrediente(ingredienteService.buscarIngredienteById(item.getIdIngrediente()));
+
+                    return produtoIngrediente;
+
+                }).collect(Collectors.toList());
+
+        produtoIngredienteService.criarTodosProdutoIncrediente(vinculos);
     }
 
     @Override
