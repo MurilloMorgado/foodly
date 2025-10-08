@@ -43,6 +43,38 @@ public class ProdutoServiceImpl implements ProdutoService {
         Produto produtoSalvo = produtosRespository.save(newProduto);
 
         // Vinculo
+        criarTodosProdutoIncrediente(produtoRequest, produtoSalvo);
+
+        return produtoSalvo.getId();
+
+    }
+
+    @Override
+    public void atualizarProdutoById(ProdutoRequest produtoRequest, Long idProduto) {
+
+        Produto newProduto = new Produto(produtoRequest);
+        Produto produtoSalvo = buscarProdutoById(idProduto);
+
+        BeanUtils.copyProperties(produtoSalvo, newProduto, "idProduto");
+        produtosRespository.save(produtoSalvo);
+
+        // Deletar Vinculo
+        produtoIngredienteService.deletarTodosProdutoIncredienteByIdProduto(idProduto);
+
+        // Vinculo
+        criarTodosProdutoIncrediente(produtoRequest, produtoSalvo);
+    }
+
+    @Override
+    public void deletarProdutoById(Long idProduto) {
+
+        // Deletar Vinculo
+        produtoIngredienteService.deletarTodosProdutoIncredienteByIdProduto(idProduto);
+        
+        produtosRespository.deleteById(idProduto);
+    }
+
+    private void criarTodosProdutoIncrediente(ProdutoRequest produtoRequest, Produto produtoSalvo) {
         List<ProdutoIngrediente> vinculos = produtoRequest.getIngrediente().stream()
                 .map(item -> {
                     ProdutoIngrediente produtoIngrediente = new ProdutoIngrediente();
@@ -58,43 +90,5 @@ public class ProdutoServiceImpl implements ProdutoService {
                 }).collect(Collectors.toList());
 
         produtoIngredienteService.criarTodosProdutoIncrediente(vinculos);
-
-        return produtoSalvo.getId();
-
-    }
-
-    @Override
-    public void atualizarProdutoById(ProdutoRequest produtoRequest, Long idProduto) {
-
-        Produto produtoDB = buscarProdutoById(idProduto);
-        Produto newProduto = new Produto(produtoRequest);
-
-        BeanUtils.copyProperties(produtoDB, newProduto, "idProduto");
-        produtosRespository.save(produtoDB);
-
-        // Deletar Vinculo
-        produtoIngredienteService.deletarTodosProdutoIncredienteByIdProduto(idProduto);
-
-        // Vinculo
-        List<ProdutoIngrediente> vinculos = produtoRequest.getIngrediente().stream()
-                .map(item -> {
-                    ProdutoIngrediente produtoIngrediente = new ProdutoIngrediente();
-
-                    produtoIngrediente.setProduto(newProduto);
-                    produtoIngrediente.setQuantidade("1");
-
-                    produtoIngrediente
-                            .setIngrediente(ingredienteService.buscarIngredienteById(item.getIdIngrediente()));
-
-                    return produtoIngrediente;
-
-                }).collect(Collectors.toList());
-
-        produtoIngredienteService.criarTodosProdutoIncrediente(vinculos);
-    }
-
-    @Override
-    public void deletarProdutoById(Long idProduto) {
-        produtosRespository.deleteById(idProduto);
     }
 }
