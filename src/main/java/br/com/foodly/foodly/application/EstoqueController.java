@@ -3,6 +3,7 @@ package br.com.foodly.foodly.application;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,8 +20,17 @@ public class EstoqueController {
     private final EstoqueService estoqueService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Estoque>> listarEstoque() {
         List<Estoque> listaEstoque = estoqueService.listarEstoque();
         return ResponseEntity.ok().body(listaEstoque);
     }
+
+    @GetMapping(value = "/{idIngrediente}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Estoque> buscarEstoqueByIdIngrediente(Long idIngrediente) {
+        Estoque estoque = estoqueService.buscarEstoqueByIdIngrediente(idIngrediente);
+        return ResponseEntity.ok().body(estoque);
+    }
+
 }

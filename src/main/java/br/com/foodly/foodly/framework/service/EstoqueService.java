@@ -8,4 +8,12 @@ public interface EstoqueService {
 
     List<Estoque> listarEstoque();
 
+    Estoque buscarEstoqueByIdIngrediente(Long idIngrediente);
+
+    Long criarEstoque(Estoque estoque);
+    
+    void atualizarEstoqueByIdIngrediente(Estoque estoque, Long idIngrediente);
+    
+    void deletarEstoqueByIdIngrediente(Long idIngrediente);
+
 }
