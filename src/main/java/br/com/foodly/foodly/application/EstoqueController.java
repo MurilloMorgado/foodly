@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +35,18 @@ public class EstoqueController {
     public ResponseEntity<Estoque> buscarEstoqueByIdIngrediente(Long idIngrediente) {
         Estoque estoque = estoqueService.buscarEstoqueByIdIngrediente(idIngrediente);
         return ResponseEntity.ok().body(estoque);
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> criarEstoque(@RequestBody Estoque estoque) {
+        Long idEstoque = estoqueService.criarEstoque(estoque);
+        return ResponseEntity.ok().body(idEstoque);
+    }
+
+    @PutMapping(value = "/{idIngrediente}")
+    public ResponseEntity<Long> atualizarEstoque(@RequestBody Estoque estoque, @PathVariable Long idIngrediente) {
+        estoqueService.atualizarEstoqueByIdIngrediente(estoque, idIngrediente);
+        return ResponseEntity.ok().build();
     }
 
 }

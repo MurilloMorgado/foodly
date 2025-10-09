@@ -25,7 +25,7 @@ public class Estoque {
     Long idEstoque;
 
     @Column(name = "QUANTIDADE")
-    Long quantidae;
+    Long quantidade;
 
     @ManyToOne
     @JoinColumn(name = "ID_INGREDIENTE")
